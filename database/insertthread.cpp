@@ -6,9 +6,8 @@
 #include "dicemaster.h"
 #include <QVariantList>
 
-InsertThread::InsertThread(QSqlQuery &query, QString tableName, QList<double> &numbers, QObject* parent)
-    : QThread(parent),
-      query(query),
+InsertThread::InsertThread(QSqlQuery &query, QString tableName, QList<double> &numbers)
+      : query(query),
       numbers(numbers)
 {
     this->tableName = tableName;
@@ -24,7 +23,7 @@ void InsertThread::run()
     {
         if(i % (scaledNumbers.size() / 100) == 0)
         {
-            emit onProgress((i * 1.0) / scaledNumbers.size() * 100);
+            qDebug() <<(i * 1.0) / scaledNumbers.size() * 100;
         }
         query.prepare(QString("INSERT INTO ") + tableName + " (value) values (:number)");
         query.bindValue(":number", number);
@@ -54,9 +53,3 @@ void InsertThread::run()
     }
     qDebug() << "insert done";
 }
-
-InsertThread::~InsertThread()
-{
-
-}
-

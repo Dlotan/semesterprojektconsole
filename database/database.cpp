@@ -184,11 +184,8 @@ bool Database::fillTable(QString tableName, int quantity, int initialClasses)
     deleteTable(tableName);
     createTable(tableName, distribution, hasIndex);
     QSqlQuery query2(permDatabaseConnection);
-    InsertThread* insertThread = new InsertThread(query2, tableName, numbers, this);
-    connect(insertThread, &InsertThread::onProgress, [=](int progress){emit onProgress(progress);});
-    connect(insertThread, &InsertThread::finished, [=](){emit onFillFinished();});
-    connect(insertThread, &InsertThread::finished, insertThread, &QObject::deleteLater);
-    insertThread->start();
+    InsertThread* insertThread = new InsertThread(query2, tableName, numbers);
+    insertThread->run();
     return true;
 }
 
@@ -493,11 +490,8 @@ bool Database::virusInsert(QString tableName, QString virusDistribution, int qua
         qDebug() << query.lastError().text();
     }
     QList<double> oldNumbersScaledCopy = oldNumbersScaled;
-    VirusInsertThread* virusInsertThread = new VirusInsertThread(query, virusTableName, oldNumbersScaledCopy, newNumbers, this);
-    connect(virusInsertThread, &VirusInsertThread::onProgress, [=](int progress){emit onProgress(progress);});
-    connect(virusInsertThread, &VirusInsertThread::finished, [=](){emit onFillFinished();});
-    connect(virusInsertThread, &VirusInsertThread::finished, virusInsertThread, &QObject::deleteLater);
-    virusInsertThread->start();
+    VirusInsertThread* virusInsertThread = new VirusInsertThread(query, virusTableName, oldNumbersScaledCopy, newNumbers);
+    virusInsertThread->run();
     return true;
 }
 
@@ -569,11 +563,8 @@ bool Database::virusUpdate(QString tableName, QString virusDistribution, int qua
         qDebug() << query.lastError().text();
     }
     QList<double> oldNumbersScaledCopy = oldNumbersScaled;
-    VirusUpdateThread* virusUpdateThread = new VirusUpdateThread(query, virusTableName, oldNumbersScaledCopy, newNumbers, this);
-    connect(virusUpdateThread, &VirusUpdateThread::onProgress, [=](int progress){emit onProgress(progress);});
-    connect(virusUpdateThread, &VirusUpdateThread::finished, [=](){emit onFillFinished();});
-    connect(virusUpdateThread, &VirusUpdateThread::finished, virusUpdateThread, &QObject::deleteLater);
-    virusUpdateThread->start();
+    VirusUpdateThread* virusUpdateThread = new VirusUpdateThread(query, virusTableName, oldNumbersScaledCopy, newNumbers);
+    virusUpdateThread->run();
     return true;
 }
 

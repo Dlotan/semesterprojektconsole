@@ -6,17 +6,13 @@
 #include <QList>
 #include <QSqlQuery>
 
-class VirusInsertThread : public QThread
+class VirusInsertThread
 {
-    Q_OBJECT
 public:
     VirusInsertThread(QSqlQuery &query, QString tableName,
-        QList<double> &before, QList<double> &after, QObject *parent = nullptr);
-    ~VirusInsertThread();
+        QList<double> &before, QList<double> &after);
 
-    void run() override;
-signals:
-    void onProgress(int);
+    void run();
 private:
     QString tableName;
     QSqlQuery query;

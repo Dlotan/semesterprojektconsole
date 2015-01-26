@@ -6,16 +6,11 @@
 #include <QDebug>
 
 VirusUpdateThread::VirusUpdateThread(QSqlQuery &query, QString tableName,
-    QList<double> &before, QList<double> &update, QObject* parent)
-    : QThread(parent),
-      tableName(tableName),
+    QList<double> &before, QList<double> &update)
+    : tableName(tableName),
       query(query),
       before(before),
       update(update)
-{
-}
-
-VirusUpdateThread::~VirusUpdateThread()
 {
 }
 
@@ -32,7 +27,7 @@ void VirusUpdateThread::run()
     {
         if(i % (scaledBefore.size() / 100) == 0)
         {
-            emit onProgress((i * 1.0) / scaledBefore.size() * 100);
+            qDebug() << ((i * 1.0) / scaledBefore.size() * 100);
         }
         query.prepare(QString("INSERT INTO ") + tableName + " (value) values (:number)");
         query.bindValue(":number", number);
@@ -49,7 +44,7 @@ void VirusUpdateThread::run()
     for(int i = 0; i < scaledBefore.length(); i += scaledBefore.size() / update.size())
     {
         int number = scaledBefore[i];
-        emit onProgress(j / (update.size() * 1.0) * 100);
+        qDebug() << (j / (update.size() * 1.0) * 100);
         query.prepare(QString("SELECT id FROM ") + tableName + " WHERE value=" + QString::number(number));
         if(!query.exec())
         {
@@ -78,7 +73,7 @@ void VirusUpdateThread::run()
     {
         if(i % (idToScaled.size() / 100) == 0)
         {
-            emit onProgress((i * 1.0) / idToScaled.size() * 100);
+            qDebug() << ((i * 1.0) / idToScaled.size() * 100);
         }
         query.prepare(QString("UPDATE ") + tableName + " set value = " + QString::number(idScaled.second)
                       + " WHERE id = " + QString::number(idScaled.first));

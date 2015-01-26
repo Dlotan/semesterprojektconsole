@@ -7,17 +7,13 @@
 #include <QList>
 #include <QSqlQuery>
 
-class VirusUpdateThread : public QThread
+class VirusUpdateThread
 {
-    Q_OBJECT
 public:
     VirusUpdateThread(QSqlQuery &query, QString tableName,
-        QList<double> &before, QList<double> &update, QObject *parent = nullptr);
-    ~VirusUpdateThread();
+        QList<double> &before, QList<double> &update);
 
-    void run() override;
-signals:
-    void onProgress(int);
+    void run();
 private:
     QString tableName;
     QSqlQuery query;
