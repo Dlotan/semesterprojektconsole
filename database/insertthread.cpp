@@ -19,11 +19,21 @@ void InsertThread::run()
     double min = *std::min_element(numbers.begin(), numbers.end());
     double max = *std::max_element(numbers.begin(), numbers.end());
     QList<int> scaledNumbers = DiceMaster::scaleListUp(numbers);
+    bool inTransaction = false;
     for(auto number : scaledNumbers)
     {
         if(i % (scaledNumbers.size() / 100) == 0)
         {
             qDebug() <<(i * 1.0) / scaledNumbers.size() * 100;
+        }
+        if(i % (scaledNumbers.size() / 100) == 5)
+        {
+            if(inTransaction)
+            {
+                query.exec("COMMIT");
+            }
+            query.exec("BEGIN");
+            inTransaction = true;
         }
         query.prepare(QString("INSERT INTO ") + tableName + " (value) values (:number)");
         query.bindValue(":number", number);
@@ -33,6 +43,7 @@ void InsertThread::run()
         }
         i++;
     }
+    query.exec("COMMIT");
     if(!query.exec("SELECT COUNT(*) FROM " + tableName))
     {
         qDebug() << query.lastError().text();
