@@ -205,8 +205,8 @@ QVariantList Database::getNumbers(QString tableName)
 
 QList<int> Database::profileQuery(QString queryString)
 {
-    const int warmup = 10;
-    const int iterations = 1000;
+    const int warmup = 1;
+    const int iterations = 10;
     double quantil = 15;
     // Warmup.
     for(int i = 0; i < warmup; ++i)
