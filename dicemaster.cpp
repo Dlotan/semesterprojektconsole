@@ -154,7 +154,7 @@ QList<double> DiceMaster::getTestedList(std::unique_ptr<Generator>& generator, i
 {
     QList<double> result;
     QList<RandomRangeClass> randomRangeClasses;
-    const int maxIterations = 100;
+    const int maxIterations = 20;
     int i = 0;
     do {
         result.clear();
