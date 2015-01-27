@@ -104,5 +104,6 @@ int main(int argc, char *argv[])
         }
     }
     qDebug() << "finished";
+    exit(0);
     return a.exec();
 }

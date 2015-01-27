@@ -52,7 +52,7 @@ void VirusUpdateThread::run()
     {
         int number = scaledBefore[i];
         qDebug() << (j / (update.size() * 1.0) * 100);
-        if((int)((update.size() * 1.0) * 100) % 5 == 0)
+        if(j % 1000 == 0)
         {
             query.exec("COMMIT");
             query.exec("BEGIN");
