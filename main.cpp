@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
                 qDebug() << "parasiteUpdate(name,parasiteDistribution,amount,initialclasses)";
                 continue;
             }
-            database->virusInsert(arguments[0],arguments[1],arguments[2].toInt(),arguments[3].toInt());
+            database->virusUpdate(arguments[0],arguments[1],arguments[2].toInt(),arguments[3].toInt());
         }
         else if(command == "delete")
         {
