@@ -160,7 +160,7 @@ bool Database::fillTable(QString tableName, int quantity, int initialClasses)
     int hasIndex = query.value(4).toInt();
     if(status != "normal")
     {
-        emit onError("Invalid status " + status);
+        qDebug() << "invalid status";
         return false;
     }
     QList<double> numbers;
@@ -178,7 +178,7 @@ bool Database::fillTable(QString tableName, int quantity, int initialClasses)
     numbers << DiceMaster::getRandomNumbers(distribution, quantity, initialClasses);
     if(numbers.size() == 0)
     {
-        emit onError("Initial classes make chi square fail");
+        qDebug() << "Initial classes make chi square fail";
         return false;
     }
     deleteTable(tableName);
@@ -441,7 +441,7 @@ bool Database::virusInsert(QString tableName, QString virusDistribution, int qua
     int hasIndex = query.value(4).toInt();
     if(status != "normal")
     {
-        emit onError("Invalid status " + status);
+        qDebug() << "Invalid status " + status;
         return false;
     }
     QVariantList oldNumbersVariant = getNumbers(tableName);
@@ -462,7 +462,7 @@ bool Database::virusInsert(QString tableName, QString virusDistribution, int qua
         QList<double> oldScaled = DiceMaster::getRandomNumbers(virusDistribution, quantity, initialClasses);
         if(oldScaled.size() == 0)
         {
-            emit onError("Mit Klassenmenge können neue Zahlen nicht gewürfelt werden");
+            qDebug() << "Mit Klassenmenge können neue Zahlen nicht gewürfelt werden";
             return false;
         }
         newNumbers += DiceMaster::scaleListDownDouble(oldScaled, min, max);
@@ -477,7 +477,7 @@ bool Database::virusInsert(QString tableName, QString virusDistribution, int qua
     }
     if(i == 0)
     {
-        emit onError("Mit Klassenmenge Chi Square schon am anfang nicht erfüllt");
+        qDebug() << "Mit Klassenmenge Chi Square schon am anfang nicht erfüllt";
         return false;
     }
     QString virusTableName = tableName + "_insert_parasite";
@@ -514,7 +514,7 @@ bool Database::virusUpdate(QString tableName, QString virusDistribution, int qua
     int hasIndex = query.value(4).toInt();
     if(status != "normal")
     {
-        emit onError("Invalid status " + status);
+        qDebug() << "Invalid status " + status;
         return false;
     }
     QVariantList oldNumbersVariant = getNumbers(tableName);
@@ -535,7 +535,7 @@ bool Database::virusUpdate(QString tableName, QString virusDistribution, int qua
         QList<double> oldScaled = DiceMaster::getRandomNumbers(virusDistribution, quantity, initialClasses);
         if(oldScaled.size() == 0)
         {
-            emit onError("Mit Klassenmenge können neue Zahlen nicht gewürfelt werden");
+            qDebug() << "Mit Klassenmenge können neue Zahlen nicht gewürfelt werden";
             return false;
         }
         newNumbers += DiceMaster::scaleListDownDouble(oldScaled, min, max);
@@ -550,7 +550,7 @@ bool Database::virusUpdate(QString tableName, QString virusDistribution, int qua
     }
     if(i == 0)
     {
-        emit onError("Mit Klassenmenge Chi Square schon am anfang nicht erfüllt");
+        qDebug() << "Mit Klassenmenge Chi Square schon am anfang nicht erfüllt";
         return false;
     }
     QString virusTableName = tableName + "_update_parasite";

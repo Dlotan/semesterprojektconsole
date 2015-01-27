@@ -23,11 +23,17 @@ void VirusUpdateThread::run()
 
     // First insert.
     QList<int> scaledBefore = DiceMaster::scaleListUp(before);
+    query.exec("BEGIN");
     for(auto number : scaledBefore)
     {
         if(i % (scaledBefore.size() / 100) == 0)
         {
             qDebug() << ((i * 1.0) / scaledBefore.size() * 100);
+        }
+        if(i % (scaledBefore.size() / 20) == 0)
+        {
+            query.exec("COMMIT");
+            query.exec("BEGIN");
         }
         query.prepare(QString("INSERT INTO ") + tableName + " (value) values (:number)");
         query.bindValue(":number", number);
@@ -37,7 +43,8 @@ void VirusUpdateThread::run()
         }
         i++;
     }
-
+    query.exec("COMMIT");
+    query.exec("BEGIN");
     // Read stage.
     int j = 1;
     QList<int> ids;
@@ -45,6 +52,11 @@ void VirusUpdateThread::run()
     {
         int number = scaledBefore[i];
         qDebug() << (j / (update.size() * 1.0) * 100);
+        if((int)((update.size() * 1.0) * 100) % 5 == 0)
+        {
+            query.exec("COMMIT");
+            query.exec("BEGIN");
+        }
         query.prepare(QString("SELECT id FROM ") + tableName + " WHERE value=" + QString::number(number));
         if(!query.exec())
         {
@@ -58,7 +70,8 @@ void VirusUpdateThread::run()
         ids << query.value(0).toInt();
         j++;
     }
-
+    query.exec("COMMIT");
+    query.exec("BEGIN");
     // Virus update.
     i = 1;
     QList<QPair<int, int>> idToScaled;
@@ -75,6 +88,11 @@ void VirusUpdateThread::run()
         {
             qDebug() << ((i * 1.0) / idToScaled.size() * 100);
         }
+        if(i % (idToScaled.size() / 20) == 0)
+        {
+            query.exec("COMMIT");
+            query.exec("BEGIN");
+        }
         query.prepare(QString("UPDATE ") + tableName + " set value = " + QString::number(idScaled.second)
                       + " WHERE id = " + QString::number(idScaled.first));
         if(!query.exec())
@@ -83,6 +101,7 @@ void VirusUpdateThread::run()
         }
         i++;
     }
+    query.exec("COMMIT");
 
     if(!query.exec("SELECT COUNT(*) FROM " + tableName))
     {

@@ -23,11 +23,17 @@ void VirusInsertThread::run()
 
     // First insert.
     QList<int> scaledBefore = DiceMaster::scaleListUp(before);
+    query.exec("BEGIN");
     for(auto number : scaledBefore)
     {
         if(i % (scaledBefore.size() / 100) == 0)
         {
             qDebug() << (i * 1.0) / scaledBefore.size() * 100;
+        }
+        if(i % (scaledBefore.size() / 20) == 0)
+        {
+            query.exec("COMMIT");
+            query.exec("BEGIN");
         }
         query.prepare(QString("INSERT INTO ") + tableName + " (value) values (:number)");
         query.bindValue(":number", number);
@@ -37,13 +43,22 @@ void VirusInsertThread::run()
         }
         i++;
     }
-
+    query.exec("COMMIT");
+    query.exec("BEGIN");
     // Delete stage.
     int j = 1;
     for(int i = 0; i < scaledBefore.length(); i += scaledBefore.size() / after.size())
     {
         int number = scaledBefore[i];
-        qDebug() << j / after.size() * 100;
+        if(i % (after.size() / 100) == 0)
+        {
+            qDebug() << (j * 1.0) / after.size() * 100;
+        }
+        if(j % 100 = 0)
+        {
+            query.exec("COMMIT");
+            query.exec("BEGIN");
+        }
         query.prepare(QString("SELECT id FROM ") + tableName + " WHERE value=" + QString::number(number));
         query.bindValue(":number", number);
         if(!query.exec())
@@ -64,7 +79,8 @@ void VirusInsertThread::run()
         }
         j++;
     }
-
+    query.exec("COMMIT");
+    query.exec("BEGIN");
     // Virus insert.
     i = 1;
     QList<int> scaledAfter = DiceMaster::scaleListUp(after);
@@ -74,6 +90,11 @@ void VirusInsertThread::run()
         {
             qDebug() << (i * 1.0) / scaledAfter.size() * 100;
         }
+        if(i % (scaledAfter.size() / 20) == 0)
+        {
+            query.exec("COMMIT");
+            query.exec("BEGIN");
+        }
         query.prepare(QString("INSERT INTO ") + tableName + " (value) values (:number)");
         query.bindValue(":number", number);
         if(!query.exec())
@@ -82,7 +103,7 @@ void VirusInsertThread::run()
         }
         i++;
     }
-
+    query.exec("COMMIT");
     if(!query.exec("SELECT COUNT(*) FROM " + tableName))
     {
         qDebug() << query.lastError().text();
