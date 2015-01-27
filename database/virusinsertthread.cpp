@@ -54,7 +54,7 @@ void VirusInsertThread::run()
         {
             qDebug() << (j * 1.0) / after.size() * 100;
         }
-        if(j % 100 = 0)
+        if(j % 100 == 0)
         {
             query.exec("COMMIT");
             query.exec("BEGIN");
